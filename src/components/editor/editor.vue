@@ -45,6 +45,11 @@ export default {
       return `editor${this._uid}`
     }
   },
+  watch: {
+    value: function (newVal) {
+      this.setHtml(newVal)
+    }
+  },
   methods: {
     setHtml (val) {
       this.editor.txt.html(val)

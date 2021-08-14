@@ -16,9 +16,13 @@ export default {
   /**
    * @description api请求基础路径
    */
+  // baseUrl: {
+  //   dev: 'https://www.easy-mock.com/mock/5add9213ce4d0e69998a6f51/iview-admin/',
+  //   pro: 'https://produce.com'
+  // },
   baseUrl: {
-    dev: 'https://www.easy-mock.com/mock/5add9213ce4d0e69998a6f51/iview-admin/',
-    pro: 'https://produce.com'
+    dev: 'http://106.52.130.31:3000/api',
+    pro: 'http://106.52.130.31:3000/api'
   },
   /**
    * @description 默认打开的首页的路由name值，默认为home

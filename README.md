@@ -1,3 +1,31 @@
+#### 描述
+青藤数据管理后台
+
+梳理目前整个服务器
+
+##### 生产环境  
+端口：80 443 3000 3306 mysql 3333 linux shell 登陆   查看端口占用 netstat -lntp
+
+nginx
+* nginx -V 
+* 配置文件路径  /etc/nginx/
+api.qingtengdata.com  api接口，80转发为443，反向代理到localhost:3000
+* html目录
+/data/work/program/qingteng
+* admin管理后台
+/data/work/program/admin
+* 前端测试
+/data/work/program/test
+
+#### 测试环境
+* 前端代码
+docker nginx 
+
+#### api接口
+* 生产环境  forever 运行在3000端口 
+
+
+
 <p align="center">
     <a href="https://www.iviewui.com">
         <img width="200" src="https://file.iviewui.com/logo-new.svg">

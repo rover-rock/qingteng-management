@@ -1,0 +1,1 @@
+scp -P 3333 -i ~/private_key.pem -r ./dist/  root@106.52.130.31:/data/work/program/admin/

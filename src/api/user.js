@@ -82,3 +82,18 @@ export const restoreTrash = msg_id => {
     }
   })
 }
+
+export const get_feedback_list = () => {
+  return axios.request({
+    url: '/admin/all-feedback/list',
+    method: 'get'
+  })
+}
+
+export const add_feedback = (params) => {
+  return axios.request({
+    url: '/admin/feedback/add',
+    method: 'post',
+    data: params
+  })
+}

@@ -1,66 +1,92 @@
 <template>
   <div>
-    <Card shadow title="社区">
-      <row class="join-page" :gutter="32">
-        <i-col span="10">
-          <img class="qq-group-img" src="../assets/images/icon-qr-qq-wechat.png">
-          <row type="flex" justify="center">
-            <i-col span="12">
-              <p>QQ 群号：621780943</p>
-            </i-col>
-            <i-col span="12"></i-col>
-          </row>
-        </i-col>
-        <i-col span="14">
-          <div class="join-page-other">
-            <Button to="https://zhuanlan.zhihu.com/feview" target="_blank" size="large">
-              <img src="../assets/images/icon-social-zhihu.svg" class="join-page-other-icon">
-              iView 知乎专栏
-            </Button>
-            <Button to="https://juejin.im/user/56fe494539b0570054f2e032" target="_blank" size="large">
-              <img src="../assets/images/icon-social-juejin.svg" class="join-page-other-icon">
-              掘金
-            </Button>
-            <Button to="https://live.bilibili.com/1353202" target="_blank" size="large">
-              <img src="../assets/images/icon-social-bilibili.svg" class="join-page-other-icon">
-              活动直播间
-            </Button>
-            <Button to="https://twitter.com/iViewUI" target="_blank" size="large">
-              <img src="../assets/images/icon-social-twitter.svg" class="join-page-other-icon">
-              Twitter
-            </Button>
-          </div>
-        </i-col>
-      </row>
-    </Card>
+    <Row :gutter="20">
+            <Col span="8">
+              <div>
+                <Card
+                  v-for="(item, index) in feedbacks"
+                  :key="index"
+                  @click.native="show_feedback(index)"
+                  style="margin-bottom:10px;cursor:pointer;"
+                >
+                  <p>{{ decodeURIComponent(item.content[0].text) }}</p>
+                  <p>用户{{item.user}}发布于 {{item.content[0].time}}</p>
+                </Card>
+              </div>
+            </Col>
+            <Col span="16">
+              <div class="message-detail-panel">
+                <div v-if="feedback_index === null">提交新的反馈</div>
+                <div v-else>
+                  <Card v-for="(item, index) in feedbacks[feedback_index].content" :key="index" style="margin-bottom:10px;cursor:pointer;">
+                   <p style="margin-bottom:5px;">{{ decodeURIComponent(item.text)}}</p>
+                    <p>{{item.source === 'user' ? '用户' : '管理员'}}&emsp;发布于&emsp;{{item.time}}</p>
+                  </Card>
+                </div>
+                <textarea class="text-area" v-model="text"></textarea>
+                <Button type="primary" @click="submit">提交</Button>
+              </div>
+            </Col>
+          </Row>
   </div>
 </template>
 
 <script>
+import { get_feedback_list, add_feedback } from '@/api/user'
 export default {
   name: 'join_page',
   data () {
     return {
+      feedbacks: [],
+      feedback_index: null,
+      text: ''
+    }
+  },
+  mounted () {
+    get_feedback_list().then(res => {
+      this.feedbacks = res.data.map(row => {
+        row.content = JSON.parse(row.content)
+        return row
+      })
+    })
+  },
+  methods: {
+    show_feedback (index) {
+      this.feedback_index = index
+    },
+    submit () {
+      const newContent = { text: encodeURIComponent(this.text), time: (new Date()).toLocaleString(), source: 'admin' }, content = ''
+      if (this.feedback_index !== null) {
+        let oldContent = this.feedbacks[this.feedback_index].content
+        oldContent.push(newContent)
+        content = JSON.stringify(oldContent)
+      } else {
+        content = JSON.stringify([newContent])
+      }
+      let id = this.feedback_index === null ? undefined : this.feedbacks[this.feedback_index].id
+      add_feedback({ content, id })
+        .then(get_feedback_list)
+        .then(res => {
+          this.feedbacks = res.data.map(row => {
+            row.content = JSON.parse(row.content)
+
+            return row
+          })
+        })
     }
   }
 }
 </script>
 <style>
-  .join-page{
-    text-align: center;
-  }
-  .qq-group-img{
-    width: 100%;
-  }
-  .join-page-other-icon{
-    width: 20px;
-    vertical-align: middle;
-    margin-right: 6px;
-  }
-  .join-page-other{
-    text-align: left;
-  }
-  .join-page-other .ivu-btn{
-    margin-right: 6px;
-  }
+  .message-detail-panel{
+  background: white;
+    padding: 20px;
+}
+.text-area{
+  width: 100%;
+    border-radius: 2px;
+    outline: none;
+    border: 1px solid #f2f2f2;
+    padding: 5px;
+}
 </style>
